@@ -1,0 +1,40 @@
+---
+// Ч/б лента работы клиники — единственный «бегущий» элемент на странице.
+// Медленно едет, на наведении стоит; при reduced-motion — обычная горизонтальная прокрутка.
+import Photo from './Photo.astro';
+import { strip } from '../content/photos';
+import type { Lang } from '../content/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const alt = lang === 'es' ? 'Trabajo diario en Smile House' : 'Работа в Smile House';
+---
+<section class="strip overflow-hidden bg-ink py-3" aria-label={alt}>
+  <div class="strip-track flex w-max gap-3">
+    {[0, 1].map((copyIdx) => (
+      <ul class="flex gap-3" aria-hidden={copyIdx === 1 ? 'true' : undefined}>
+        {strip.map((name) => (
+          <li class="w-[13rem] shrink-0 overflow-hidden rounded-[2px] md:w-[17rem]">
+            <Photo name={name} alt={copyIdx === 0 ? alt : ''} sizes="(min-width: 768px) 17rem, 13rem" class="aspect-[3/4] w-full object-cover grayscale" />
+          </li>
+        ))}
+      </ul>
+    ))}
+  </div>
+</section>
+
+<style>
+  .strip-track {
+    animation: strip 90s linear infinite;
+  }
+  .strip:hover .strip-track {
+    animation-play-state: paused;
+  }
+  @keyframes strip {
+    to { transform: translateX(calc(-50% - 0.375rem)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .strip { overflow-x: auto; }
+    .strip-track { animation: none; }
+  }
+</style>

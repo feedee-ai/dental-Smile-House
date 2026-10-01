@@ -1,6 +1,8 @@
 ---
 import Icon from './Icon.astro';
 import Monogram from './Monogram.astro';
+import Photo from './Photo.astro';
+import Stars from './Stars.astro';
 import OpenStatus from './OpenStatus.astro';
 import { copy } from '../content/copy';
 import { site, type Lang } from '../content/site';
@@ -37,18 +39,19 @@ const q = quoteFor(review, lang);
 
     <figure
       class:list={[
-        'hero-card relative isolate flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-[4px] bg-ink p-6 text-porcelain sm:p-8 lg:col-span-5 lg:min-h-[34rem] lg:p-10',
+        'hero-card relative isolate flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-[4px] bg-ink p-6 text-porcelain sm:p-8 lg:col-span-5 lg:min-h-[38rem] lg:p-10',
+        photos.hero && 'min-h-[36rem] pt-56 sm:min-h-[40rem]',
       ]}
     >
       {photos.hero ? (
         <>
-          <img src={photos.hero} alt="" class="absolute inset-0 -z-10 size-full object-cover grayscale contrast-[1.05]" loading="eager" />
-          <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/70 to-ink/10" />
+          <Photo name={photos.hero} alt="" eager sizes="(min-width: 1024px) 40vw, 100vw" class="absolute inset-0 -z-10 size-full object-cover object-[50%_20%] grayscale" />
+          <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink from-35% via-ink/75 via-60% to-ink/0" />
         </>
       ) : (
         <Monogram class="pointer-events-none absolute -right-[18%] -top-[6%] -z-10 h-[62%] w-auto text-porcelain/[0.06]" title="" />
       )}
-      <span class="h-10 font-sans text-[5rem] font-semibold leading-[0.9] text-coral" aria-hidden="true">“</span>
+      <Stars class="text-[1.125rem] text-coral" label={lang === 'es' ? '5 de 5 estrellas' : '5 из 5 звёзд'} />
       <blockquote class="mt-4 font-display text-[1.375rem] font-normal leading-[1.32] tracking-[-0.01em] sm:text-[1.625rem]">
         <p>{q.text}</p>
       </blockquote>

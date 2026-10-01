@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import Stars from './Stars.astro';
 import { copy } from '../content/copy';
 import { reviewById, quoteFor } from '../content/reviews';
 import { site, type Lang } from '../content/site';
@@ -30,6 +31,7 @@ const items = ids
         const q = quoteFor(r, lang);
         return (
           <figure class="mb-5 break-inside-avoid rounded-[4px] border border-line bg-paper p-6 md:p-7">
+            <Stars class="mb-4 text-[1rem] text-coral-deep" />
             <blockquote class="text-[1.0625rem] leading-relaxed text-ink">
               <p>«{q.text}»</p>
             </blockquote>
