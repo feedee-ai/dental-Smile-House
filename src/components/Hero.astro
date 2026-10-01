@@ -1,0 +1,80 @@
+---
+import Icon from './Icon.astro';
+import Monogram from './Monogram.astro';
+import OpenStatus from './OpenStatus.astro';
+import { copy } from '../content/copy';
+import { site, type Lang } from '../content/site';
+import { reviewById, quoteFor } from '../content/reviews';
+import { photos } from '../content/photos';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = copy[lang];
+const review = reviewById('shein');
+const q = quoteFor(review, lang);
+---
+<section class="relative overflow-hidden" aria-labelledby="hero-title">
+  <div class="wrap grid gap-10 pb-14 pt-8 md:pt-12 lg:grid-cols-12 lg:gap-12 lg:pb-20 lg:pt-14">
+    <div class="flex flex-col lg:col-span-7 lg:pt-6">
+      <OpenStatus lang={lang} />
+
+      <h1
+        id="hero-title"
+        class="mt-6 max-w-[16ch] text-[2.75rem] font-medium leading-[1.1] tracking-[-0.03em] sm:text-[3.5rem] lg:text-[4.5rem]"
+      >
+        {t.hero.titleBefore}<span class="hl hl-dots hl-sweep">{t.hero.titleMark}</span>{t.hero.titleAfter}
+      </h1>
+
+      <p class="mt-6 max-w-[42ch] text-[1.125rem] leading-relaxed text-ink-soft md:text-[1.25rem]">
+        {t.hero.lead}
+      </p>
+
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a href="#cita" class="btn btn-ink sm:px-7"><Icon name="calendar" />{t.cta.book}</a>
+        <a href={site.whatsapp} class="btn btn-line sm:px-7" target="_blank" rel="noopener"><Icon name="whatsapp" />{t.cta.whatsapp}</a>
+      </div>
+    </div>
+
+    <figure
+      class:list={[
+        'hero-card relative isolate flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-[4px] bg-ink p-6 text-porcelain sm:p-8 lg:col-span-5 lg:min-h-[34rem] lg:p-10',
+      ]}
+    >
+      {photos.hero ? (
+        <>
+          <img src={photos.hero} alt="" class="absolute inset-0 -z-10 size-full object-cover grayscale contrast-[1.05]" loading="eager" />
+          <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/70 to-ink/10" />
+        </>
+      ) : (
+        <Monogram class="pointer-events-none absolute -right-[18%] -top-[6%] -z-10 h-[62%] w-auto text-porcelain/[0.06]" title="" />
+      )}
+      <span class="h-10 font-sans text-[5rem] font-semibold leading-[0.9] text-coral" aria-hidden="true">“</span>
+      <blockquote class="mt-4 font-display text-[1.375rem] font-normal leading-[1.32] tracking-[-0.01em] sm:text-[1.625rem]">
+        <p>{q.text}</p>
+      </blockquote>
+      <figcaption class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.9375rem] text-porcelain/70">
+        <span class="font-medium text-porcelain">{review.author}</span>
+        <a href={site.reviewsUrl} target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 underline decoration-porcelain/30 hover:decoration-porcelain">
+          <Icon name="google" class="size-4" />{t.hero.quoteLabel}
+        </a>
+        {q.note && <span class="w-full text-[0.8125rem] text-porcelain/50">{q.note}</span>}
+      </figcaption>
+      <div class="mt-8 flex items-center gap-2 border-t border-porcelain/15 pt-5 text-[0.9375rem] text-porcelain/75">
+        <Icon name="translate" class="size-5 shrink-0" />
+        {t.hero.langs}
+      </div>
+    </figure>
+  </div>
+</section>
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-card {
+      animation: card-in 900ms var(--ease-out) 150ms both;
+    }
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(16px); clip-path: inset(8% 0 0 0 round 4px); }
+      to { opacity: 1; transform: none; clip-path: inset(0 0 0 0 round 4px); }
+    }
+  }
+</style>

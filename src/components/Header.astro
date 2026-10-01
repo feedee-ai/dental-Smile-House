@@ -1,0 +1,111 @@
+---
+import Monogram from './Monogram.astro';
+import Icon from './Icon.astro';
+import { copy } from '../content/copy';
+import { site, homePath, type Lang } from '../content/site';
+
+interface Props { lang: Lang; alternates: Record<Lang, string>; onHome?: boolean }
+const { lang, alternates, onHome = true } = Astro.props;
+const t = copy[lang];
+const other: Lang = lang === 'es' ? 'ru' : 'es';
+const base = onHome ? '' : homePath(lang);
+const links = [
+  { href: `${base}#casos`, label: t.nav.cases },
+  { href: `${base}#primera-visita`, label: t.nav.visit },
+  { href: `${base}#equipo`, label: t.nav.team },
+  { href: `${base}#tratamientos`, label: t.nav.services },
+  { href: `${base}#opiniones`, label: t.nav.reviews },
+  { href: `${base}#contacto`, label: t.nav.contact },
+];
+---
+<header id="top" class="sticky top-0 z-40 border-b border-transparent bg-paper/95 transition-[border-color] duration-200 data-[scrolled]:border-line">
+  <div class="wrap flex h-16 items-center justify-between gap-4 md:h-[4.5rem]">
+    <a href={homePath(lang)} class="flex items-center gap-3" aria-label="Smile House">
+      <Monogram class="h-7 w-auto md:h-8" />
+      <span class="hidden h-7 w-px bg-ink/15 sm:block"></span>
+      <span class="hidden leading-none sm:block">
+        <span class="block font-display text-[1.0625rem] font-semibold tracking-[-0.01em]">Smile House</span>
+        <span class="mt-1 block text-[0.75rem] text-graphite">Clínica dental · València</span>
+      </span>
+    </a>
+
+    <nav aria-label="Principal" class="hidden xl:block">
+      <ul class="flex items-center gap-7 text-[0.9375rem]">
+        {links.map((l) => (
+          <li><a href={l.href} class="text-ink-soft transition-colors hover:text-ink hover:underline">{l.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2 md:gap-3">
+      <a
+        href={alternates[other]}
+        hreflang={other}
+        lang={other}
+        class="inline-flex h-10 items-center rounded-full px-3 text-[0.9375rem] font-medium text-ink-soft transition-colors hover:bg-ink/5 hover:text-ink"
+      >
+        <span class="sm:hidden">{t.nav.langSwitchShort}</span>
+        <span class="hidden sm:inline">{t.nav.langSwitch}</span>
+      </a>
+      <a href={site.phone.href} class="hidden items-center gap-2 px-2 text-[0.9375rem] font-medium tabular md:inline-flex">
+        <Icon name="phone" class="size-[1.125rem]" />{site.phone.display}
+      </a>
+      <a href={`${base}#cita`} class="btn btn-ink hidden min-h-11 px-5 text-[0.9375rem] md:inline-flex">{t.cta.book}</a>
+      <button
+        type="button"
+        id="menu-open"
+        class="inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-ink/5 xl:hidden"
+        aria-controls="menu"
+        aria-expanded="false"
+        aria-label={t.nav.menu}
+      >
+        <Icon name="list" class="size-6" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog id="menu" class="m-0 h-dvh max-h-none w-full max-w-none bg-paper p-0 text-ink backdrop:bg-ink/30 xl:hidden" aria-label={t.nav.menu}>
+  <div class="wrap flex h-16 items-center justify-between">
+    <Monogram class="h-7 w-auto" />
+    <button type="button" id="menu-close" class="inline-flex size-10 items-center justify-center rounded-full hover:bg-ink/5" aria-label={t.nav.close}>
+      <Icon name="x" class="size-6" />
+    </button>
+  </div>
+  <nav class="wrap pt-6" aria-label="Menú">
+    <ul class="divide-y divide-line border-y border-line">
+      {links.map((l) => (
+        <li>
+          <a href={l.href} data-menu-link class="flex items-center justify-between py-4 font-display text-[1.625rem] font-medium tracking-[-0.015em]">
+            {l.label}
+            <Icon name="arrowRight" class="size-5 text-graphite" />
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="mt-8 grid gap-3">
+      <a href={site.phone.href} class="btn btn-line w-full tabular"><Icon name="phone" />{site.phone.display}</a>
+      <a href={`${base}#cita`} data-menu-link class="btn btn-ink w-full">{t.cta.book}</a>
+    </div>
+  </nav>
+</dialog>
+
+<script>
+  const header = document.querySelector('header');
+  const onScroll = () => header?.toggleAttribute('data-scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const menu = document.getElementById('menu') as HTMLDialogElement | null;
+  const openBtn = document.getElementById('menu-open');
+  const setOpen = (open: boolean) => {
+    if (!menu) return;
+    if (open) menu.showModal();
+    else menu.close();
+    openBtn?.setAttribute('aria-expanded', String(open));
+  };
+  openBtn?.addEventListener('click', () => setOpen(true));
+  document.getElementById('menu-close')?.addEventListener('click', () => setOpen(false));
+  menu?.querySelectorAll('[data-menu-link]').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  menu?.addEventListener('close', () => openBtn?.setAttribute('aria-expanded', 'false'));
+</script>

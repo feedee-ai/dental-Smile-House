@@ -1,0 +1,45 @@
+---
+import Icon from './Icon.astro';
+import { copy } from '../content/copy';
+import { reviewById, quoteFor } from '../content/reviews';
+import { site, type Lang } from '../content/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = copy[lang].reviews;
+const ids = ['khairova', 'cotua', 'fatyuk', 'garcia', 'pod', 'rl', 'almudena', 'medina', 'barrera'];
+// Сначала отзывы на языке страницы, переводы — после.
+const items = ids
+  .map(reviewById)
+  .sort((a, b) => Number(b.lang === lang) - Number(a.lang === lang));
+---
+<section id="opiniones" class="border-t border-line bg-porcelain" aria-labelledby="reviews-title">
+  <div class="wrap py-20 md:py-28">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h2 id="reviews-title" class="text-[2.25rem] font-medium leading-[1.08] tracking-[-0.025em] md:text-[3.25rem]">{t.title}</h2>
+        <p class="mt-5 max-w-[46ch] text-[1.0625rem] leading-relaxed text-ink-soft">{t.lead}</p>
+      </div>
+      <a href={site.reviewsUrl} target="_blank" rel="noopener" class="btn btn-line self-start md:self-auto">
+        <Icon name="google" />{t.all}<Icon name="arrowUpRight" class="size-4!" />
+      </a>
+    </div>
+
+    <div class="mt-12 columns-1 gap-5 md:mt-16 md:columns-2 lg:columns-3">
+      {items.map((r) => {
+        const q = quoteFor(r, lang);
+        return (
+          <figure class="mb-5 break-inside-avoid rounded-[4px] border border-line bg-paper p-6 md:p-7">
+            <blockquote class="text-[1.0625rem] leading-relaxed text-ink">
+              <p>«{q.text}»</p>
+            </blockquote>
+            <figcaption class="mt-5 flex items-center justify-between gap-3 border-t border-line pt-4 text-[0.875rem]">
+              <span class="font-medium">{r.author}</span>
+              <span class="text-right text-graphite">{q.note ?? 'Google'}</span>
+            </figcaption>
+          </figure>
+        );
+      })}
+    </div>
+  </div>
+</section>
