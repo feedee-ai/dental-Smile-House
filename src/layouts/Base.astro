@@ -52,7 +52,7 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="robots" content="noindex" />
     <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang="es" href={new URL(alternates.es, siteUrl).href} />
     <link rel="alternate" hreflang="ru" href={new URL(alternates.ru, siteUrl).href} />
