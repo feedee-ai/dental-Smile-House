@@ -1,0 +1,76 @@
+---
+import '../styles/global.css';
+import CookieBanner from '../components/CookieBanner.astro';
+import { site, homePath, type Lang } from '../content/site';
+import { copy } from '../content/copy';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  // Пути той же страницы на обоих языках — для hreflang и переключателя.
+  alternates: Record<Lang, string>;
+  noindex?: boolean;
+}
+const { lang, title, description, alternates, noindex = false } = Astro.props;
+const t = copy[lang];
+const siteUrl = Astro.site!;
+const canonical = new URL(alternates[lang], siteUrl).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Dentist',
+  name: site.legalName,
+  url: new URL(homePath(lang), siteUrl).href,
+  telephone: '+34 601 44 30 61',
+  image: new URL('/og.png', siteUrl).href,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    addressLocality: site.address.city,
+    postalCode: site.address.postalCode,
+    addressRegion: site.address.region,
+    addressCountry: site.address.country,
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '10:00',
+      closes: '16:30',
+    },
+  ],
+  sameAs: [site.instagram.url],
+  knowsLanguage: ['es', 'ru'],
+  foundingDate: String(site.since),
+};
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="es" href={new URL(alternates.es, siteUrl).href} />
+    <link rel="alternate" hreflang="ru" href={new URL(alternates.ru, siteUrl).href} />
+    <link rel="alternate" hreflang="x-default" href={new URL(alternates.es, siteUrl).href} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#f3f3f1" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', siteUrl).href} />
+    <meta property="og:locale" content={t.htmlLang.replace('-', '_')} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body class="min-h-dvh">
+    <slot />
+    <CookieBanner lang={lang} />
+  </body>
+</html>

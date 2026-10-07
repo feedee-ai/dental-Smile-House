@@ -1,0 +1,60 @@
+---
+// Живой статус «открыто / закрыто». Без JS показываются просто часы работы.
+// Это главный аргумент питча: вечером и в выходные телефон молчит, а заявка работает.
+import { copy } from '../content/copy';
+import { site, type Lang } from '../content/site';
+
+interface Props { lang: Lang; tone?: 'light' | 'dark' }
+const { lang, tone = 'light' } = Astro.props;
+const s = copy[lang].status;
+const fallback = copy[lang].contact.hours[0];
+const strings = {
+  open: s.open,
+  closed: s.closed,
+  today: s.today,
+  tomorrow: s.tomorrow,
+  days: s.days,
+  leave: s.leaveRequest,
+  until: s.openUntil('{t}'),
+  opensAt: s.opensAt('{d}', '{t}'),
+};
+---
+<div
+  class:list={[
+    'open-status flex min-h-6 flex-wrap items-center gap-x-2 gap-y-1 text-[0.9375rem]',
+    tone === 'dark' ? 'text-porcelain/80' : 'text-graphite',
+  ]}
+  data-open-status
+  data-tz={site.timezone}
+  data-hours={JSON.stringify(site.hours)}
+  data-strings={JSON.stringify(strings)}
+  aria-live="polite"
+>
+  <span class="tabular" data-fallback>{fallback.d}, {fallback.h}</span>
+</div>
+
+<script>
+  import { status, type Slot } from '../lib/hours';
+
+  function render(el: HTMLElement) {
+    const slots: Slot[] = JSON.parse(el.dataset.hours!);
+    const t = JSON.parse(el.dataset.strings!);
+    const st = status(slots, el.dataset.tz!);
+    const dark = el.classList.contains('text-porcelain/80');
+    const dot = (cls: string) => `<span class="relative inline-flex size-2.5 shrink-0 rounded-full ${cls}" aria-hidden="true"></span>`;
+    if (st.open) {
+      el.innerHTML = `${dot('bg-open shadow-[0_0_0_4px_rgb(29_122_76/0.16)]')}<strong class="font-medium ${dark ? 'text-porcelain' : 'text-ink'}">${t.open}</strong><span class="tabular">${t.until.replace('{t}', st.closes)}</span>`;
+    } else {
+      const day = st.opensIn === 0 ? t.today : st.opensIn === 1 ? t.tomorrow : t.days[st.opensDay];
+      const when = t.opensAt.replace('{d}', day).replace('{t}', st.opens);
+      el.innerHTML = `${dot('bg-coral-deep')}<strong class="font-medium ${dark ? 'text-porcelain' : 'text-ink'}">${t.closed}.</strong><span class="tabular">${when}.</span>`;
+    }
+    el.dataset.state = st.open ? 'open' : 'closed';
+    document.documentElement.dataset.clinic = st.open ? 'open' : 'closed';
+  }
+
+  const els = document.querySelectorAll<HTMLElement>('[data-open-status]');
+  const tick = () => els.forEach(render);
+  tick();
+  setInterval(tick, 60_000);
+</script>
