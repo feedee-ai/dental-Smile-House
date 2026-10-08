@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://smilehouse-valencia.vercel.app/sitemap.xml
