@@ -1,5 +1,8 @@
 # Smile House — сайт стоматологии в Валенсии
 
+- **Прод:** https://smilehouse-valencia.vercel.app (ES `/`, RU `/ru/`)
+- **v1 (исходная):** https://smilehouse-valencia-v1.vercel.app · **v2 (статическая):** https://smilehouse-valencia-v2.vercel.app
+
 Демо для `Clínica dental Smile House` от 2BRO.LAB. Контекст и правила — в
 [`CLAUDE.md`](CLAUDE.md) и [`docs/brief.md`](docs/brief.md). Что нужно от
 клиники до запуска — [`docs/launch-checklist.md`](docs/launch-checklist.md).
@@ -13,9 +16,9 @@ npm run build
 npm run check    # типы
 ```
 
-Форма заявки (`/api/lead`) шлёт сообщение в Telegram. Для неё нужны
-переменные из [`.env.example`](.env.example); без них форма покажет
-посетителю телефон и WhatsApp.
+Форма заявки открывает WhatsApp клиники с готовым сообщением. Серверный путь
+`/api/lead` → Telegram остался в коде (переменные из [`.env.example`](.env.example)),
+но сейчас не используется.
 
 ## Где что лежит
 

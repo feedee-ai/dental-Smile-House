@@ -21,7 +21,6 @@ const t = copy[lang].reels;
       <li class="reel relative w-[62vw] max-w-[17rem] shrink-0 snap-start overflow-hidden rounded-[4px] bg-[#1a1a1a] md:w-[15.5rem]">
         <video
           class="aspect-[9/16] w-full object-cover"
-          src={`/video/reel-${id}.mp4`}
           poster={`/video/reel-${id}.webp`}
           muted
           loop
@@ -29,7 +28,10 @@ const t = copy[lang].reels;
           preload="none"
           aria-label={t.alt}
           data-reel
-        ></video>
+        >
+          <source src={`/video/reel-${id}.webm`} type="video/webm" />
+          <source src={`/video/reel-${id}.mp4`} type="video/mp4" />
+        </video>
         <button type="button" class="reel-play" data-reel-play aria-label={t.play}>
           <svg viewBox="0 0 256 256" class="size-6" aria-hidden="true"><path fill="currentColor" d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27Z"/></svg>
         </button>

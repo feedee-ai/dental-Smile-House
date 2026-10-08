@@ -37,21 +37,28 @@
 ## Версии
 
 - **Прод** (ветка `claude/serene-gauss-phw0sv`, Vercel `smilehouse-valencia`):
-  статический сайт v2 «снимок», пересобран 07.10.2026 по `/rebuild-site`.
-- **v1** (ветка `v1`, https://smilehouse-valencia-v1.vercel.app): первая
+  основа v1 (Astro), доработана 08.10.2026 по просьбе Александра: заголовок
+  hero как в v2, рейтинг Google 4,7 / 87, слайдеры до/после, разборы со
+  снимками КТ, лента рилсов без текста, 2 видеоотзыва, 33 отзыва дословно,
+  фото команды; форма записи → готовое сообщение в WhatsApp.
+- **v1** (ветка `v1`, https://smilehouse-valencia-v1.vercel.app): исходная
   Astro-версия, заморожена, noindex. Не коммитить.
+- **v2** (ветка `v2`, https://smilehouse-valencia-v2.vercel.app): статическая
+  версия «снимок» от 07.10.2026, заморожена, noindex. Александру понравилась
+  меньше, чем v1. Не коммитить.
 
 ## Стек
 
-Статический сайт без сборки на Vercel: `site/` раздаётся как есть
-(`vercel.json`). HTML генерирует `node tools/build.mjs` из `tools/content.mjs`
-(тексты ES/RU/EN), `tools/config.mjs` (факты, цены) и `tools/reviews.mjs`.
-Запись — шторка → готовое сообщение в WhatsApp клиники, без бэкенда.
-Подробности — [`README.md`](README.md).
+Astro + TypeScript + Tailwind, Vercel (адаптер `@astrojs/vercel`). Тексты —
+`src/content/copy.ts`, отзывы — `src/content/reviews.ts`, кейсы —
+`src/content/cases.ts`, фото/видео — `src/content/photos.ts`
+(`public/photos`, `public/video`). Новые фото режет `tools/photos.py`.
+Материалы: `materials/instagram/` (фото, 43 видео, выгрузки постов),
+`materials/google-maps/` (карточка, 87 отзывов со звёздами, 23 фото).
 
 ## Открытые вопросы к клинике
 
-Рейтинг и число отзывов Google; работает ли WhatsApp на 601 44 30 61; состав
+работает ли WhatsApp на 601 44 30 61; состав
 врачей и подписанные портреты; можно ли записаться к конкретному врачу (FAQ
 это обещает); Nº Registro Sanitario, юрлицо, NIF, email; что за доклад в
 Harvard (июнь 2026); согласие пациентов на до/после на сайте; домен.

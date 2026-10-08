@@ -48,7 +48,10 @@ const fmt = (v: number) => v.toLocaleString(lang === 'es' ? 'es-ES' : 'ru-RU', {
           <li>
             <figure>
               <div class="story relative overflow-hidden rounded-[4px] bg-black">
-                <video class="aspect-[9/16] w-full object-cover" src={`/video/story-${s.id}.mp4`} poster={`/video/story-${s.id}.webp`} preload="none" playsinline controls={false} data-story aria-label={st.labels[i]}></video>
+                <video class="aspect-[9/16] w-full object-cover" poster={`/video/story-${s.id}.webp`} preload="none" playsinline controls={false} data-story aria-label={st.labels[i]}>
+                  <source src={`/video/story-${s.id}.webm`} type="video/webm" />
+                  <source src={`/video/story-${s.id}.mp4`} type="video/mp4" />
+                </video>
                 <button type="button" class="story-play" data-story-play>
                   <span class="grid size-12 place-items-center rounded-full bg-porcelain text-ink md:size-14">
                     <svg viewBox="0 0 256 256" class="size-6" aria-hidden="true"><path fill="currentColor" d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27Z"/></svg>
