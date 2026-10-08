@@ -282,18 +282,3 @@ export function quoteFor(r: Review, lang: Lang) {
   };
   return { text: r.tr?.[lang] ?? r.translation ?? r.text, note: notes[lang][r.lang] ?? null };
 }
-
-// Первый экран: отзывы про разные виды лечения, чтобы клиника читалась целиком,
-// а не как «здесь удаляют зубы». tag — о чём отзыв (по его тексту).
-export const heroReviews: { id: string; tag: Record<Lang, string> }[] = [
-  { id: 'cotua', tag: { es: 'Microscopio y escáner 3D', ru: 'Микроскоп и 3D-сканер' } },
-  { id: 'shein', tag: { es: 'Extracción', ru: 'Удаление зуба' } },
-  { id: 'chikina', tag: { es: 'Implante', ru: 'Имплант' } },
-  { id: 'garcia', tag: { es: 'Endodoncia', ru: 'Лечение каналов' } },
-  { id: 'svietlieisha', tag: { es: 'Ortodoncia', ru: 'Ортодонтия' } },
-  { id: 'sitnikova', tag: { es: 'Limpieza dental', ru: 'Профчистка' } },
-  { id: 'almudena', tag: { es: 'Toda la familia', ru: 'Вся семья' } },
-];
-
-// Блок отзывов открывается этими — про то, что помогли там, где не помогли другие.
-export const featuredReviews = ['bynkalo', 'afanasieva', 'nabilkova', 'androsova', 'elenad', 'shurigin'];

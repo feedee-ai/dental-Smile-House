@@ -13,14 +13,11 @@ interface Props {
   handle: string;
   sizes?: string;
   class?: string;
-  // Класс пропорции (например 'aspect-[12/5]'): оба кадра обрезаются одинаково,
-  // чтобы слайдеры в одном ряду были одной высоты.
-  aspect?: string;
 }
-const { before, after, label, beforeText, afterText, handle, sizes = '(min-width: 1024px) 50vw, 92vw', class: cls = '', aspect } = Astro.props;
+const { before, after, label, beforeText, afterText, handle, sizes = '(min-width: 1024px) 50vw, 92vw', class: cls = '' } = Astro.props;
 ---
-<div class:list={['ba-slider relative overflow-hidden rounded-[4px] bg-black select-none', aspect, cls]} data-ba style="--x: 50%">
-  <Photo name={before} alt={`${beforeText}: ${label}`} sizes={sizes} class={aspect ? 'block size-full object-cover' : 'block w-full'} />
+<div class:list={['ba-slider relative overflow-hidden rounded-[4px] bg-black select-none', cls]} data-ba style="--x: 50%">
+  <Photo name={before} alt={`${beforeText}: ${label}`} sizes={sizes} class="block w-full" />
   <div class="ba-after absolute inset-0">
     <Photo name={after} alt={`${afterText}: ${label}`} sizes={sizes} class="block size-full object-cover" />
   </div>
