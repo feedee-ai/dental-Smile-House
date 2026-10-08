@@ -10,6 +10,9 @@ export const photoSizes = {
   'ba-1': [1280, 1280],
   'ba-2': [1280, 1280],
   'ba-3': [1080, 706],
+  // Прислано в чате 08.10.2026 (пост клиники, керамика IKLO lab), исходник —
+  // materials/instagram/manual/ba-beard.webp, обрезан до квадрата.
+  'ba-4': [673, 673],
   'eq-microscope': [1280, 1707],
   'eq-scanner': [1280, 1707],
   'eq-digital': [1280, 1707],
@@ -57,7 +60,8 @@ export const strip: PhotoName[] = [
 ];
 
 // До/после — цветные, как опубликовала клиника.
-export const beforeAfter: PhotoName[] = ['ba-1', 'ba-2', 'ba-3'];
+// ba-1 и ba-2 — один и тот же пациент, поэтому первым стоит ba-4.
+export const beforeAfter: PhotoName[] = ['ba-4', 'ba-2', 'ba-3'];
 
 // Слайдеры до/после: пары одного кадра, опубликованные клиникой.
 export const comparisons = [
