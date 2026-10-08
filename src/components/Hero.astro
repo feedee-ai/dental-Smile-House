@@ -1,33 +1,42 @@
 ---
-import Icon from './Icon.astro';
+// Первый экран — про клинику целиком: что лечат, чем работают, что пишут пациенты
+// о разных видах лечения. Сложные случаи — отдельным блоком ниже.
+import Icon, { type IconName } from './Icon.astro';
 import Monogram from './Monogram.astro';
 import Photo from './Photo.astro';
 import Stars from './Stars.astro';
 import OpenStatus from './OpenStatus.astro';
+import QuoteRotator from './QuoteRotator.astro';
 import { copy } from '../content/copy';
 import { site, type Lang } from '../content/site';
-import { reviewById, quoteFor } from '../content/reviews';
+import { reviewById, quoteFor, heroReviews } from '../content/reviews';
 import { photos } from '../content/photos';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = copy[lang];
-const review = reviewById('shein');
-const q = quoteFor(review, lang);
+const quotes = heroReviews.map(({ id, tag }) => {
+  const r = reviewById(id);
+  const q = quoteFor(r, lang);
+  return { text: q.text, author: r.author, note: q.note, tag: tag[lang] };
+});
 ---
 <section class="relative overflow-hidden" aria-labelledby="hero-title">
-  <div class="wrap grid gap-10 pb-14 pt-8 md:pt-12 lg:grid-cols-12 lg:gap-12 lg:pb-20 lg:pt-14">
-    <div class="flex flex-col lg:col-span-7 lg:pt-6">
-      <OpenStatus lang={lang} />
+  <div class="wrap grid gap-10 pb-10 pt-8 md:pt-12 lg:grid-cols-12 lg:gap-12 lg:pb-14 lg:pt-14">
+    <div class="flex flex-col lg:col-span-7 lg:pt-4">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <OpenStatus lang={lang} />
+      </div>
+      <p class="mt-6 text-[0.8125rem] font-medium uppercase tracking-[0.12em] text-graphite">{t.hero.eyebrow}</p>
 
       <h1
         id="hero-title"
-        class="mt-6 max-w-[16ch] text-[2.75rem] font-medium leading-[1.1] tracking-[-0.03em] sm:text-[3.5rem] lg:text-[4.5rem]"
+        class="mt-3 max-w-[16ch] text-[2.625rem] font-medium leading-[1.08] tracking-[-0.03em] sm:text-[3.5rem] lg:text-[4.25rem]"
       >
         {t.hero.titleBefore}<span class="hl hl-dots hl-sweep">{t.hero.titleMark}</span>{t.hero.titleAfter}
       </h1>
 
-      <p class="mt-6 max-w-[42ch] text-[1.125rem] leading-relaxed text-ink-soft md:text-[1.25rem]">
+      <p class="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-ink-soft md:text-[1.1875rem]">
         {t.hero.lead}
       </p>
 
@@ -37,43 +46,77 @@ const q = quoteFor(review, lang);
       </div>
 
       {site.googleRating && (
-        <a href={site.reviewsUrl} target="_blank" rel="noopener" class="mt-8 inline-flex items-center gap-3 self-start text-[0.9375rem] text-ink-soft hover:text-ink">
+        <a href={site.reviewsUrl} target="_blank" rel="noopener" class="mt-7 inline-flex items-center gap-3 self-start text-[0.9375rem] text-ink-soft hover:text-ink">
           <Stars class="text-[1rem] text-coral-deep" label={`${site.googleRating.value} / 5`} />
           <span class="tabular">{t.hero.rating(site.googleRating.value.toLocaleString(lang === 'es' ? 'es-ES' : 'ru-RU'), site.googleRating.count)}</span>
         </a>
       )}
+
+      <nav class="mt-9 border-t border-line pt-6" aria-label={t.hero.servicesLabel}>
+        <ul class="flex flex-wrap gap-2">
+          {t.hero.services.map((s, i) => (
+            <li>
+              <a
+                href={s.href}
+                class:list={[
+                  'chip inline-flex min-h-10 items-center rounded-full border px-4 text-[0.9375rem] transition-colors duration-200',
+                  i === t.hero.services.length - 1 ? 'border-coral bg-coral/25 hover:bg-coral' : 'border-line bg-porcelain hover:border-ink',
+                ]}
+              >{s.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
 
     <figure
       class:list={[
-        'hero-card relative isolate flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-[4px] bg-ink p-6 text-porcelain sm:p-8 lg:col-span-5 lg:min-h-[38rem] lg:p-10',
-        photos.hero && 'min-h-[36rem] pt-56 sm:min-h-[40rem]',
+        'hero-card relative isolate flex min-h-[34rem] flex-col justify-end overflow-hidden rounded-[4px] bg-ink p-6 text-porcelain sm:min-h-[38rem] sm:p-8 lg:col-span-5 lg:min-h-0 lg:p-9',
+        photos.hero ? 'pt-60' : 'pt-10',
       ]}
     >
       {photos.hero ? (
         <>
-          <Photo name={photos.hero} alt="" eager sizes="(min-width: 1024px) 40vw, 100vw" class="absolute inset-0 -z-10 size-full object-cover object-[50%_20%] grayscale" />
-          <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink from-35% via-ink/75 via-60% to-ink/0" />
+          <Photo name={photos.hero} alt="" eager sizes="(min-width: 1024px) 40vw, 100vw" class="absolute inset-0 -z-10 size-full object-cover object-[50%_18%] grayscale" />
+          <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink from-45% via-ink/80 via-65% to-ink/0" />
         </>
       ) : (
         <Monogram class="pointer-events-none absolute -right-[18%] -top-[6%] -z-10 h-[62%] w-auto text-porcelain/[0.06]" title="" />
       )}
-      <Stars class="text-[1.125rem] text-coral" label={lang === 'es' ? '5 de 5 estrellas' : '5 из 5 звёзд'} />
-      <blockquote class="mt-4 font-display text-[1.375rem] font-normal leading-[1.32] tracking-[-0.01em] sm:text-[1.625rem]">
-        <p>{q.text}</p>
-      </blockquote>
-      <figcaption class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.9375rem] text-porcelain/70">
-        <span class="font-medium text-porcelain">{review.author}</span>
-        <a href={site.reviewsUrl} target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 underline decoration-porcelain/30 hover:decoration-porcelain">
-          <Icon name="google" class="size-4" />{t.hero.quoteLabel}
-        </a>
-        {q.note && <span class="w-full text-[0.8125rem] text-porcelain/50">{q.note}</span>}
-      </figcaption>
-      <div class="mt-8 flex items-center gap-2 border-t border-porcelain/15 pt-5 text-[0.9375rem] text-porcelain/75">
+
+      <a href="#resultados" class="ba-peek group absolute right-4 top-4 w-[8.5rem] overflow-hidden rounded-[3px] bg-black shadow-[0_12px_30px_-8px_rgb(0_0_0/0.6)] ring-1 ring-porcelain/15 sm:right-6 sm:top-6 sm:w-[10rem]">
+        <span class="relative block">
+          <Photo name="smile-before" alt="" sizes="160px" class="block aspect-[2.13] w-full object-cover" />
+          <span class="absolute bottom-1 left-1 rounded-[2px] bg-black/60 px-1.5 text-[0.6875rem] text-porcelain">{t.cases.before}</span>
+        </span>
+        <span class="relative block border-t border-porcelain/40">
+          <Photo name="smile-after" alt="" sizes="160px" class="block aspect-[2.13] w-full object-cover" />
+          <span class="absolute bottom-1 left-1 rounded-[2px] bg-black/60 px-1.5 text-[0.6875rem] text-porcelain">{t.cases.after}</span>
+        </span>
+        <span class="flex items-center justify-between gap-1 px-2 py-1.5 text-[0.75rem] leading-tight text-porcelain">
+          {t.hero.resultsLink}<Icon name="arrowRight" class="size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </a>
+
+      <QuoteRotator items={quotes} tone="dark" label={t.hero.reviewsLabel} googleLabel={t.hero.quoteLabel} />
+
+      <div class="mt-6 flex items-center gap-2 border-t border-porcelain/15 pt-5 text-[0.9375rem] text-porcelain/75">
         <Icon name="translate" class="size-5 shrink-0" />
         {t.hero.langs}
       </div>
     </figure>
+  </div>
+
+  <div class="wrap pb-14 lg:pb-20">
+    <ul class="grid grid-cols-2 gap-px overflow-hidden rounded-[4px] border border-line bg-line lg:grid-cols-4">
+      {t.hero.facts.map((f) => (
+        <li class="flex flex-col gap-2 bg-porcelain p-4 sm:p-5">
+          <Icon name={f.icon as IconName} class="size-6 text-coral-deep" />
+          <p class="font-display text-[1.0625rem] font-medium leading-tight sm:text-[1.1875rem]">{f.title}</p>
+          <p class="text-[0.875rem] leading-snug text-graphite">{f.text}</p>
+        </li>
+      ))}
+    </ul>
   </div>
 </section>
 
@@ -82,9 +125,19 @@ const q = quoteFor(review, lang);
     .hero-card {
       animation: card-in 900ms var(--ease-out) 150ms both;
     }
+    .ba-peek {
+      animation: peek-in 700ms var(--ease-out) 900ms both;
+    }
     @keyframes card-in {
       from { opacity: 0; transform: translateY(16px); clip-path: inset(8% 0 0 0 round 4px); }
       to { opacity: 1; transform: none; clip-path: inset(0 0 0 0 round 4px); }
     }
+    @keyframes peek-in {
+      from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+    }
+  }
+  @media (hover: hover) {
+    .ba-peek { transition: transform 300ms var(--ease-out); }
+    .ba-peek:hover { transform: translateY(-2px); }
   }
 </style>

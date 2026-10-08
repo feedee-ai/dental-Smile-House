@@ -1,0 +1,97 @@
+---
+// «До и после» сразу за первым экраном: всё, что клиника опубликовала.
+// Свои кадры — слайдерами; посты, фото которых ещё нет в репозитории, —
+// встраиванием Instagram по кнопке (без кнопки к Instagram запросов нет).
+import Icon from './Icon.astro';
+import BeforeAfter from './BeforeAfter.astro';
+import { copy } from '../content/copy';
+import { localResults, instagramResults } from '../content/results';
+import { site, type Lang } from '../content/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = copy[lang].results;
+const c = copy[lang].cases;
+---
+<section id="resultados" class="bg-ink text-porcelain" aria-labelledby="results-title">
+  <div class="wrap py-20 md:py-28">
+    <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+      <h2 id="results-title" class="text-[2.25rem] font-medium leading-[1.08] tracking-[-0.025em] md:text-[3.25rem]">{t.title}</h2>
+      <p class="max-w-[48ch] text-[1.0625rem] leading-relaxed text-porcelain/70">{t.lead}</p>
+    </div>
+
+    <ul class="-mx-5 mt-10 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 md:mx-0 md:mt-14 md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:px-0 md:pb-0">
+      {localResults.map((r, i) => (
+        <li class:list={['w-[88%] shrink-0 snap-center md:w-auto', i === 0 && 'md:col-span-2']}>
+          <BeforeAfter
+            before={r.before}
+            after={r.after}
+            label={r.title[lang]}
+            beforeText={c.before}
+            afterText={c.after}
+            handle={c.handle}
+            aspect={i === 0 ? 'aspect-[2.13/1]' : 'aspect-[2.4/1]'}
+            sizes={i === 0 ? '(min-width: 768px) 1200px, 88vw' : '(min-width: 768px) 50vw, 88vw'}
+          />
+          <div class="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+            <p class="flex flex-wrap items-center gap-2 text-[0.9375rem] text-porcelain/85">
+              <span class="rounded-full bg-porcelain/12 px-2.5 py-0.5 text-[0.75rem] font-medium">{r.tag[lang]}</span>
+              {r.title[lang]}
+            </p>
+            <a href={r.url} target="_blank" rel="noopener" class="link-arrow text-[0.875rem] text-porcelain/60">{site.instagram.handle}<Icon name="arrowUpRight" /></a>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <div class="mt-16 md:mt-20" data-ig>
+      <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h3 class="font-display text-[1.5rem] font-medium tracking-[-0.01em] md:text-[1.75rem]">{t.moreTitle}</h3>
+          <p class="mt-2 max-w-[56ch] text-[0.9375rem] leading-relaxed text-porcelain/60">{t.moreLead}</p>
+        </div>
+        <button type="button" class="btn btn-coral self-start md:self-auto" data-ig-load><Icon name="instagram" />{t.load}</button>
+      </div>
+
+      <ul class="-mx-5 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
+        {instagramResults.map((p) => (
+          <li class="w-[78%] shrink-0 snap-center sm:w-auto">
+            <div class="ig-tile relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-[4px] bg-[#1c1c1c] p-5" data-ig-tile data-src={`${p.url}embed/`}>
+              <span class="self-start rounded-full bg-porcelain/12 px-2.5 py-0.5 text-[0.75rem] font-medium text-porcelain/85">{p.tag[lang]}</span>
+              <Icon name="instagram" class="pointer-events-none absolute -right-6 top-1/2 size-48 -translate-y-1/2 text-porcelain/[0.05]" />
+              <div>
+                <p class="font-display text-[1.25rem] font-medium leading-snug">{p.title[lang]}</p>
+                <a href={p.url} target="_blank" rel="noopener" class="link-arrow mt-3 text-[0.875rem] text-porcelain/65">{t.open}<Icon name="arrowUpRight" /></a>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <a href={site.instagram.url} target="_blank" rel="noopener" class="link-arrow mt-8 text-porcelain/80">{t.all} {site.instagram.handle}<Icon name="arrowUpRight" /></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ig-tile.loaded { padding: 0; background: #fff; aspect-ratio: auto; }
+  .ig-tile iframe { display: block; width: 100%; height: 34rem; border: 0; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ig]').forEach((root) => {
+    const btn = root.querySelector<HTMLButtonElement>('[data-ig-load]')!;
+    btn.addEventListener('click', () => {
+      root.querySelectorAll<HTMLElement>('[data-ig-tile]').forEach((tile) => {
+        const f = document.createElement('iframe');
+        f.src = tile.dataset.src!;
+        f.loading = 'lazy';
+        f.title = tile.querySelector('p')?.textContent ?? 'Instagram';
+        f.setAttribute('scrolling', 'no');
+        tile.replaceChildren(f);
+        tile.classList.add('loaded');
+      });
+      btn.hidden = true;
+    });
+  });
+</script>

@@ -14,13 +14,6 @@ JOBS = {
     'smile-after':  (IG / 'DVWPIBHDI9u-2.jpg', (0, 694, 1440, 1370)),
     'metal-before': (IG / 'DQt68YPDfVY-2.jpg', (0, 323, 1080, 666)),
     'metal-after':  (IG / 'DQt68YPDfVY-2.jpg', (0, 683, 1080, 1026)),
-    # КТ и снимки из разборов случаев
-    'cbct-before':  (IG / 'DVt_z_YDooL-1.jpg', None),
-    'cbct-after':   (IG / 'DVt_z_YDooL-2.jpg', None),
-    'sinus-closed': (IG / 'DYkbX6lDiAG-1.jpg', None),
-    'sinus-plan':   (IG / 'DSLCWEfDQab-1.jpg', None),
-    'sinus-plan-2': (IG / 'DSLCWEfDQab-3.jpg', None),
-    'pano-implant': (IG / 'DN21qRB2rmm-2.jpg', None),
     # команда и клиника (карточка Google)
     'team-group':   (GM / 'gm-16.jpg', None),
     'entrance':     (GM / 'gm-11.jpg', None),

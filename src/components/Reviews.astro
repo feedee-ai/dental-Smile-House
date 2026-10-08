@@ -1,8 +1,9 @@
 ---
 import Icon from './Icon.astro';
 import Stars from './Stars.astro';
+import QuoteRotator from './QuoteRotator.astro';
 import { copy } from '../content/copy';
-import { reviews, quoteFor } from '../content/reviews';
+import { reviews, reviewById, quoteFor, heroReviews, featuredReviews } from '../content/reviews';
 import { stories } from '../content/photos';
 import { site, type Lang } from '../content/site';
 
@@ -10,8 +11,17 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = copy[lang].reviews;
 const st = copy[lang].stories;
-// Отзывы, которые уже стоят в первом экране, разборе случаев и у врачей, здесь не повторяем.
-const used = new Set(['shein', 'bynkalo', 'daniel', 'iglesia', 'magris']);
+// Сверху — крупные сменяющиеся отзывы «помогли там, где не помогли другие».
+const featured = featuredReviews.map((id) => {
+  const r = reviewById(id);
+  const q = quoteFor(r, lang);
+  return { text: q.text, author: r.author, note: q.note };
+});
+// Отзывы из первого экрана, карусели, случаев, первого визита и у врачей ниже не повторяем.
+const used = new Set([
+  ...heroReviews.map((r) => r.id), ...featuredReviews,
+  'pod', 'daniel', 'iglesia', 'anders', 'magris',
+]);
 const pool = reviews.filter((r) => !used.has(r.id));
 // Сначала основная подборка, потом «ещё»; внутри — сначала отзывы на языке страницы.
 const byLang = (a: (typeof pool)[number], b: (typeof pool)[number]) => Number(b.lang === lang) - Number(a.lang === lang);
@@ -36,6 +46,10 @@ const fmt = (v: number) => v.toLocaleString(lang === 'es' ? 'es-ES' : 'ru-RU', {
           </span>
         </a>
       )}
+    </div>
+
+    <div class="mt-12 border-t-2 border-ink pt-8 md:mt-16 md:pt-10">
+      <QuoteRotator items={featured} tone="light" size="lg" label={t.title} class="max-w-4xl" />
     </div>
 
     <div class="mt-14 grid gap-5 rounded-[4px] bg-ink p-5 text-porcelain sm:p-8 md:mt-16 lg:grid-cols-12 lg:gap-10 lg:p-10">

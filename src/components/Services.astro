@@ -1,52 +1,59 @@
 ---
+// Услуги по группам — темы, о которых клиника пишет в Instagram, с ссылкой на пост.
 import Icon from './Icon.astro';
 import Photo from './Photo.astro';
 import { copy } from '../content/copy';
-import type { PhotoName } from '../content/photos';
-import type { Lang } from '../content/site';
+import { serviceGroups } from '../content/services';
+import { site, type Lang } from '../content/site';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = copy[lang].services;
-// Реальный случай к услуге (из постов клиники); null — фото нет.
-const thumbs: (PhotoName | null)[] = ['sinus-closed', null, 'metal-after'];
 ---
 <section id="tratamientos" class="wrap py-20 md:py-28" aria-labelledby="services-title">
   <h2 id="services-title" class="text-[2.25rem] font-medium leading-[1.08] tracking-[-0.025em] md:text-[3.25rem]">{t.title}</h2>
-  <p class="mt-5 max-w-[46ch] text-[1.0625rem] leading-relaxed text-ink-soft">{t.lead}</p>
+  <p class="mt-5 max-w-[52ch] text-[1.0625rem] leading-relaxed text-ink-soft">{t.lead}</p>
 
-  <ol class="mt-12 mb-10 border-b border-ink/80 md:mt-16 md:mb-14">
-    {t.featured.map((s, i) => (
-      <li class="group grid gap-3 border-t border-ink/80 py-8 md:grid-cols-12 md:gap-8 md:py-10">
-        <h3 class="text-[1.75rem] font-medium leading-[1.12] tracking-[-0.02em] md:col-span-6 md:text-[2.5rem]">
-          <span class="bg-[linear-gradient(var(--color-coral),var(--color-coral))] bg-no-repeat bg-[length:0%_100%] transition-[background-size] duration-500 ease-[var(--ease-out)] group-hover:bg-[length:100%_100%] [box-decoration-break:clone]">{s.title}</span>
-        </h3>
-        <p class="max-w-[44ch] text-[1.0625rem] leading-relaxed text-ink-soft md:col-span-4 md:pt-2">{s.text}</p>
-        <div class="md:col-span-2 md:pt-2">
-          {thumbs[i] && (
-            <a href="#casos" class="block overflow-hidden rounded-[2px]" aria-label={copy[lang].nav.cases}>
-              <Photo name={thumbs[i]!} alt={s.title} sizes="(min-width: 768px) 12vw, 40vw" class="aspect-[4/3] w-40 object-cover transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-[1.04] md:w-full" />
-            </a>
-          )}
+  <ul class="mt-12 grid gap-4 md:mt-16 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
+    {serviceGroups.map((g) => (
+      <li class="svc flex flex-col overflow-hidden rounded-[4px] border border-line bg-porcelain">
+        <div class="overflow-hidden">
+          <Photo name={g.photo} alt="" sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 92vw" class="aspect-[16/9] w-full object-cover object-[50%_35%] grayscale transition-transform duration-700 ease-[var(--ease-out)]" />
+        </div>
+        <div class="flex flex-1 flex-col p-5 sm:p-6">
+          <h3 class="text-[1.5rem] font-medium leading-tight tracking-[-0.015em]">{g.title[lang]}</h3>
+          <ul class="mt-4 divide-y divide-line border-t border-line">
+            {g.items.map((it) => (
+              <li>
+                <a href={it.url} target="_blank" rel="noopener" class="svc-item group/it flex items-start justify-between gap-3 py-3.5" aria-label={`${it.title[lang]}. ${t.postLabel}`}>
+                  <span>
+                    <span class="block font-display text-[1.0625rem] font-medium leading-snug">{it.title[lang]}</span>
+                    <span class="mt-1 block text-[0.875rem] leading-snug text-graphite">{it.text[lang]}</span>
+                  </span>
+                  <Icon name="arrowUpRight" class="mt-1 size-4 shrink-0 text-mist transition-transform duration-200 group-hover/it:-translate-y-0.5 group-hover/it:translate-x-0.5 group-hover/it:text-ink" />
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </li>
     ))}
-  </ol>
-
-  <ul class="grid gap-px overflow-hidden rounded-[4px] border border-line bg-line sm:grid-cols-2 lg:grid-cols-5">
-    {t.rest.map((s, i) => {
-      const urgent = i === t.rest.length - 1;
-      return (
-        <li class:list={['flex flex-col p-6', urgent ? 'bg-coral' : 'bg-porcelain']}>
-          <h3 class="font-display text-[1.1875rem] font-medium leading-snug">{s.title}</h3>
-          <p class:list={['mt-2 text-[0.9375rem] leading-relaxed', urgent ? 'text-ink' : 'text-graphite']}>{s.text}</p>
-          {urgent && (
-            <a href="#cita" class="link-arrow mt-auto pt-4 text-[0.9375rem] text-ink">
-              {copy[lang].cta.book}<Icon name="arrowRight" />
-            </a>
-          )}
-        </li>
-      );
-    })}
+    <li class="flex flex-col justify-between gap-8 rounded-[4px] bg-coral p-6 sm:p-8">
+      <div>
+        <Icon name="warning" class="size-8" />
+        <h3 class="mt-5 text-[1.75rem] font-medium leading-tight tracking-[-0.015em] md:text-[2rem]">{t.urgent.title}</h3>
+        <p class="mt-3 max-w-[36ch] leading-relaxed text-ink">{t.urgent.text}</p>
+      </div>
+      <div class="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+        <a href={site.phone.href} class="btn btn-ink"><Icon name="phone" />{site.phone.display}</a>
+        <a href="#cita" class="btn btn-line">{copy[lang].cta.book}<Icon name="arrowRight" /></a>
+      </div>
+    </li>
   </ul>
 </section>
+
+<style>
+  @media (hover: hover) {
+    .svc:hover :global(img) { transform: scale(1.03); }
+  }
+</style>

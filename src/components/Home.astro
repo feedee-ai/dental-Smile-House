@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Header from './Header.astro';
 import Hero from './Hero.astro';
+import Results from './Results.astro';
 import Cases from './Cases.astro';
 import Reels from './Reels.astro';
 import FirstVisit from './FirstVisit.astro';
@@ -25,13 +26,14 @@ const alternates = { es: '/', ru: '/ru/' };
   <Header lang={lang} alternates={alternates} />
   <main>
     <Hero lang={lang} />
+    <Results lang={lang} />
     <Cases lang={lang} />
+    <Reviews lang={lang} />
+    <Services lang={lang} />
     <Reels lang={lang} />
     <FirstVisit lang={lang} />
     <Team lang={lang} />
-    <Services lang={lang} />
     <PhotoStrip lang={lang} />
-    <Reviews lang={lang} />
     <Contact lang={lang} />
     <LeadForm lang={lang} />
   </main>
