@@ -84,8 +84,8 @@ export function caseFile(t, lang) {
         <div class="cf-ruler">
           <div class="cf-bar"><span class="cf-fill" data-cf-fill></span></div>
           <ol class="cf-ticks">${[10, 7.5, 5, 2.5, 0].map((v) => `<li>${String(v).replace('.', lang === 'en' ? '.' : ',')}</li>`).join('')}</ol>
-          <p class="cf-read"><span class="num" data-cf-num>2,5</span><span class="u">${esc(c.unit)}</span></p>
         </div>
+        <p class="cf-read"><span class="num" data-cf-num>${lang === 'en' ? '2.5' : '2,5'}</span><span class="u">${esc(c.unit)}</span></p>
       </div>
       <ol class="cf-steps">${steps}</ol>
     </div>
