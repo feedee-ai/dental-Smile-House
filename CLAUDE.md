@@ -11,6 +11,11 @@
 | [`docs/brief.md`](docs/brief.md) | клиника, аудитория, позиционирование, структура сайта, питч, риски |
 | [`docs/reviews.md`](docs/reviews.md) | отзывы с Google Maps, скопированные вручную 01.10.2026 |
 | [`docs/instagram-posts.json`](docs/instagram-posts.json) | 100 последних постов `@smilehouse_vlc` (июнь 2025 — сентябрь 2026) |
+| [`materials/BRIEF.md`](materials/BRIEF.md) | бриф пересборки 07.10.2026: за что хвалят/ругают с частотой, вывод для структуры |
+| [`materials/research.md`](materials/research.md) | исследование ниши (без скриншотов — см. ограничение внутри) |
+| [`PRODUCT.md`](PRODUCT.md) / [`DESIGN.md`](DESIGN.md) | кто клиент и что продаём / визуальная система сайта |
+| [`materials/instagram/media/`](materials/instagram/media) | 254 фото из постов (архив 01.10.2026) |
+| [`docs/launch-checklist.md`](docs/launch-checklist.md) | что нужно от клиники до запуска |
 
 ## Правила, которые не обсуждаются
 
@@ -29,7 +34,24 @@
 - Мобильная версия проектируется первой: пациент с острой болью ищет с
   телефона.
 
-## Стек (предложение)
+## Версии
 
-Astro + TypeScript + Tailwind, статическая сборка, Vercel. Тот же стек, что
-у сайта 2BRO.LAB, — форму заявки и отправку в Telegram можно переиспользовать.
+- **Прод** (ветка `claude/serene-gauss-phw0sv`, Vercel `smilehouse-valencia`):
+  статический сайт v2 «снимок», пересобран 07.10.2026 по `/rebuild-site`.
+- **v1** (ветка `v1`, https://smilehouse-valencia-v1.vercel.app): первая
+  Astro-версия, заморожена, noindex. Не коммитить.
+
+## Стек
+
+Статический сайт без сборки на Vercel: `site/` раздаётся как есть
+(`vercel.json`). HTML генерирует `node tools/build.mjs` из `tools/content.mjs`
+(тексты ES/RU/EN), `tools/config.mjs` (факты, цены) и `tools/reviews.mjs`.
+Запись — шторка → готовое сообщение в WhatsApp клиники, без бэкенда.
+Подробности — [`README.md`](README.md).
+
+## Открытые вопросы к клинике
+
+Рейтинг и число отзывов Google; работает ли WhatsApp на 601 44 30 61; состав
+врачей и подписанные портреты; можно ли записаться к конкретному врачу (FAQ
+это обещает); Nº Registro Sanitario, юрлицо, NIF, email; что за доклад в
+Harvard (июнь 2026); согласие пациентов на до/после на сайте; домен.
