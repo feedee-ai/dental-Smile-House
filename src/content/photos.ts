@@ -26,6 +26,22 @@ export const photoSizes = {
   'strip-7': [1280, 1707],
   'strip-8': [1280, 1707],
   'strip-9': [1280, 1707],
+  // Добавлено 08.10.2026 (tools/photos.py)
+  'wear-before': [1280, 527],
+  'wear-after': [1280, 527],
+  'smile-before': [1280, 601],
+  'smile-after': [1280, 601],
+  'metal-before': [1080, 343],
+  'metal-after': [1080, 343],
+  'cbct-before': [1280, 1280],
+  'cbct-after': [1280, 1280],
+  'sinus-closed': [1280, 1280],
+  'sinus-plan': [1280, 1280],
+  'sinus-plan-2': [1280, 1280],
+  'pano-implant': [1280, 1707],
+  'team-group': [552, 310],
+  'entrance': [608, 1080],
+  'operatory': [810, 1080],
 } as const;
 
 export type PhotoName = keyof typeof photoSizes;
@@ -42,3 +58,21 @@ export const strip: PhotoName[] = [
 
 // До/после — цветные, как опубликовала клиника.
 export const beforeAfter: PhotoName[] = ['ba-1', 'ba-2', 'ba-3'];
+
+// Слайдеры до/после: пары одного кадра, опубликованные клиникой.
+export const comparisons = [
+  { id: 'wear', before: 'wear-before', after: 'wear-after', url: 'https://www.instagram.com/p/DVWPIBHDI9u/' },
+  { id: 'metal', before: 'metal-before', after: 'metal-after', url: 'https://www.instagram.com/p/DQt68YPDfVY/' },
+  { id: 'smile', before: 'smile-before', after: 'smile-after', url: 'https://www.instagram.com/p/DVWPIBHDI9u/' },
+] as const satisfies readonly { id: string; before: PhotoName; after: PhotoName; url: string }[];
+
+// Рилсы клиники без текста (public/video/reel-<shortCode>.mp4 + .webp).
+export const reels = [
+  'DLFth6bNbgg', 'DXY8tOyjbG0', 'DLxCf6it33Y', 'Da5TFBjNEc9', 'DPjxos7jtvZ', 'DYhZa7-NoPX', 'DTdlk8vDpPL', 'DQZ-O5sDvoD',
+];
+
+// Видеоотзывы пациенток (на русском), public/video/story-<shortCode>.mp4.
+export const stories = [
+  { id: 'DNK75v2NLL_', url: 'https://www.instagram.com/p/DNK75v2NLL_/' },
+  { id: 'DMsRk3gt8tm', url: 'https://www.instagram.com/p/DMsRk3gt8tm/' },
+];

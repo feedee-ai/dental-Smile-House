@@ -35,6 +35,13 @@ const q = quoteFor(review, lang);
         <a href="#cita" class="btn btn-ink sm:px-7"><Icon name="calendar" />{t.cta.book}</a>
         <a href={site.whatsapp} class="btn btn-line sm:px-7" target="_blank" rel="noopener"><Icon name="whatsapp" />{t.cta.whatsapp}</a>
       </div>
+
+      {site.googleRating && (
+        <a href={site.reviewsUrl} target="_blank" rel="noopener" class="mt-8 inline-flex items-center gap-3 self-start text-[0.9375rem] text-ink-soft hover:text-ink">
+          <Stars class="text-[1rem] text-coral-deep" label={`${site.googleRating.value} / 5`} />
+          <span class="tabular">{t.hero.rating(site.googleRating.value.toLocaleString(lang === 'es' ? 'es-ES' : 'ru-RU'), site.googleRating.count)}</span>
+        </a>
+      )}
     </div>
 
     <figure

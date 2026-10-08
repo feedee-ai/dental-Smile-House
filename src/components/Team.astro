@@ -56,6 +56,14 @@ const t = copy[lang].team;
           <p class="mt-2 text-[0.9375rem] leading-relaxed text-graphite">{t.harvardCaption}</p>
         </figcaption>
       </figure>
+      <figure class="md:col-span-6">
+        <Photo name="team-group" alt={t.groupAlt} sizes="(min-width: 768px) 50vw, 100vw" class="aspect-[16/9] w-full rounded-[4px] object-cover" />
+        <figcaption class="mt-3 text-[0.9375rem] text-graphite">{t.groupCaption}</figcaption>
+      </figure>
+      <figure class="grid grid-cols-2 gap-4 md:col-span-6 md:gap-5">
+        <Photo name="entrance" alt={t.entranceAlt} sizes="(min-width: 768px) 25vw, 50vw" class="aspect-[4/5] w-full rounded-[4px] object-cover md:aspect-auto md:h-full" />
+        <Photo name="operatory" alt={t.operatoryAlt} sizes="(min-width: 768px) 25vw, 50vw" class="aspect-[4/5] w-full rounded-[4px] object-cover md:aspect-auto md:h-full" />
+      </figure>
     </div>
   </div>
 </section>

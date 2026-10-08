@@ -1,0 +1,76 @@
+---
+// Слайдер до/после: «после» поверх «до», граница двигается range-инпутом
+// (мышь, касание, клавиатура). Без JS — показана середина.
+import Photo from './Photo.astro';
+import type { PhotoName } from '../content/photos';
+
+interface Props {
+  before: PhotoName;
+  after: PhotoName;
+  label: string;
+  beforeText: string;
+  afterText: string;
+  handle: string;
+  sizes?: string;
+  class?: string;
+}
+const { before, after, label, beforeText, afterText, handle, sizes = '(min-width: 1024px) 50vw, 92vw', class: cls = '' } = Astro.props;
+---
+<div class:list={['ba-slider relative overflow-hidden rounded-[4px] bg-black select-none', cls]} data-ba style="--x: 50%">
+  <Photo name={before} alt={`${beforeText}: ${label}`} sizes={sizes} class="block w-full" />
+  <div class="ba-after absolute inset-0">
+    <Photo name={after} alt={`${afterText}: ${label}`} sizes={sizes} class="block size-full object-cover" />
+  </div>
+  <span class="ba-tag left-3">{beforeText}</span>
+  <span class="ba-tag right-3">{afterText}</span>
+  <span class="ba-line" aria-hidden="true"><span class="ba-knob"></span></span>
+  <input type="range" min="0" max="100" value="50" class="ba-range" aria-label={`${handle}: ${label}`} />
+</div>
+
+<style>
+  .ba-after { clip-path: inset(0 0 0 var(--x)); }
+  .ba-tag {
+    position: absolute; bottom: 0.75rem; padding: 0.2rem 0.55rem; border-radius: 3px;
+    background: rgb(0 0 0 / 0.55); color: #fff; font-size: 0.75rem; letter-spacing: 0.02em; pointer-events: none;
+  }
+  .ba-line {
+    position: absolute; top: 0; bottom: 0; left: var(--x); width: 2px; margin-left: -1px;
+    background: #fff; pointer-events: none;
+  }
+  .ba-knob {
+    position: absolute; top: 50%; left: 50%; width: 2.5rem; height: 2.5rem; margin: -1.25rem 0 0 -1.25rem;
+    border-radius: 999px; background: #fff; box-shadow: 0 6px 18px rgb(0 0 0 / 0.3);
+    transition: transform 200ms var(--ease-out);
+  }
+  .ba-knob::before, .ba-knob::after {
+    content: ''; position: absolute; top: 50%; margin-top: -5px; border: 5px solid transparent;
+  }
+  .ba-knob::before { left: 7px; border-right-color: #121212; }
+  .ba-knob::after { right: 7px; border-left-color: #121212; }
+  .ba-slider:active .ba-knob { transform: scale(0.92); }
+  .ba-range {
+    position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y;
+  }
+  .ba-slider:has(.ba-range:focus-visible) .ba-knob { outline: 2px solid var(--color-coral); outline-offset: 3px; }
+  .ba-slider.hint .ba-after, .ba-slider.hint .ba-line { transition: clip-path 900ms var(--ease-in-out, ease), left 900ms var(--ease-in-out, ease); }
+</style>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((ba) => {
+    const r = ba.querySelector<HTMLInputElement>('.ba-range')!;
+    const set = (v: number | string) => ba.style.setProperty('--x', `${v}%`);
+    r.addEventListener('input', () => { ba.classList.remove('hint'); set(r.value); });
+    if (reduce) return;
+    // Один раз «покачать» границу, чтобы было понятно, что её можно тянуть.
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      ba.classList.add('hint');
+      setTimeout(() => set(30), 200);
+      setTimeout(() => set(68), 1200);
+      setTimeout(() => { set(50); setTimeout(() => ba.classList.remove('hint'), 950); }, 2200);
+    }, { threshold: 0.6 });
+    io.observe(ba);
+  });
+</script>

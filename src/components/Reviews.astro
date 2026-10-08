@@ -2,17 +2,23 @@
 import Icon from './Icon.astro';
 import Stars from './Stars.astro';
 import { copy } from '../content/copy';
-import { reviewById, quoteFor } from '../content/reviews';
+import { reviews, quoteFor } from '../content/reviews';
+import { stories } from '../content/photos';
 import { site, type Lang } from '../content/site';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = copy[lang].reviews;
-const ids = ['khairova', 'cotua', 'fatyuk', 'garcia', 'pod', 'rl', 'almudena', 'medina', 'barrera'];
-// Сначала отзывы на языке страницы, переводы — после.
-const items = ids
-  .map(reviewById)
-  .sort((a, b) => Number(b.lang === lang) - Number(a.lang === lang));
+const st = copy[lang].stories;
+// Отзывы, которые уже стоят в первом экране, разборе случаев и у врачей, здесь не повторяем.
+const used = new Set(['shein', 'bynkalo', 'daniel', 'iglesia', 'magris']);
+const pool = reviews.filter((r) => !used.has(r.id));
+// Сначала основная подборка, потом «ещё»; внутри — сначала отзывы на языке страницы.
+const byLang = (a: (typeof pool)[number], b: (typeof pool)[number]) => Number(b.lang === lang) - Number(a.lang === lang);
+const main = pool.filter((r) => !r.more).sort(byLang);
+const extra = pool.filter((r) => r.more).sort(byLang);
+const rating = site.googleRating;
+const fmt = (v: number) => v.toLocaleString(lang === 'es' ? 'es-ES' : 'ru-RU', { minimumFractionDigits: 1 });
 ---
 <section id="opiniones" class="border-t border-line bg-porcelain" aria-labelledby="reviews-title">
   <div class="wrap py-20 md:py-28">
@@ -21,16 +27,50 @@ const items = ids
         <h2 id="reviews-title" class="text-[2.25rem] font-medium leading-[1.08] tracking-[-0.025em] md:text-[3.25rem]">{t.title}</h2>
         <p class="mt-5 max-w-[46ch] text-[1.0625rem] leading-relaxed text-ink-soft">{t.lead}</p>
       </div>
-      <a href={site.reviewsUrl} target="_blank" rel="noopener" class="btn btn-line self-start md:self-auto">
-        <Icon name="google" />{t.all}<Icon name="arrowUpRight" class="size-4!" />
-      </a>
+      {rating && (
+        <a href={site.reviewsUrl} target="_blank" rel="noopener" class="group flex items-center gap-5 self-start rounded-[4px] border border-line bg-paper px-5 py-4 md:self-auto">
+          <span class="font-display text-[3rem] font-medium leading-none tracking-[-0.04em] tabular">{fmt(rating.value)}</span>
+          <span class="flex flex-col gap-1.5">
+            <Stars value={5} class="text-[1.125rem] text-coral-deep" label={`${fmt(rating.value)} / 5`} />
+            <span class="inline-flex items-center gap-1.5 text-[0.9375rem] text-graphite"><Icon name="google" class="size-4" />{t.count(rating.count)}<Icon name="arrowUpRight" class="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></span>
+          </span>
+        </a>
+      )}
     </div>
 
-    <div class="mt-12 columns-1 gap-5 md:mt-16 md:columns-2 lg:columns-3">
-      {items.map((r) => {
+    <div class="mt-14 grid gap-5 rounded-[4px] bg-ink p-5 text-porcelain sm:p-8 md:mt-16 lg:grid-cols-12 lg:gap-10 lg:p-10">
+      <div class="lg:col-span-4">
+        <h3 class="text-[1.75rem] font-medium leading-[1.12] tracking-[-0.02em] md:text-[2.125rem]">{st.title}</h3>
+        <p class="mt-4 max-w-[36ch] leading-relaxed text-porcelain/70">{st.lead}</p>
+      </div>
+      <ul class="grid grid-cols-2 gap-3 md:gap-5 lg:col-span-8">
+        {stories.map((s, i) => (
+          <li>
+            <figure>
+              <div class="story relative overflow-hidden rounded-[4px] bg-black">
+                <video class="aspect-[9/16] w-full object-cover" src={`/video/story-${s.id}.mp4`} poster={`/video/story-${s.id}.webp`} preload="none" playsinline controls={false} data-story aria-label={st.labels[i]}></video>
+                <button type="button" class="story-play" data-story-play>
+                  <span class="grid size-12 place-items-center rounded-full bg-porcelain text-ink md:size-14">
+                    <svg viewBox="0 0 256 256" class="size-6" aria-hidden="true"><path fill="currentColor" d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27Z"/></svg>
+                  </span>
+                  <span class="sr-only">{st.play}</span>
+                </button>
+              </div>
+              <figcaption class="mt-3 text-[0.9375rem] leading-snug text-porcelain/85">
+                {st.labels[i]}
+                <a href={s.url} target="_blank" rel="noopener" class="link-arrow mt-1 flex text-[0.8125rem] text-porcelain/60">{st.open}<Icon name="arrowUpRight" /></a>
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="mt-12 columns-1 gap-5 md:mt-16 md:columns-2 lg:columns-3" data-reviews>
+      {[...main, ...extra].map((r) => {
         const q = quoteFor(r, lang);
         return (
-          <figure class="mb-5 break-inside-avoid rounded-[4px] border border-line bg-paper p-6 md:p-7">
+          <figure class:list={['mb-5 break-inside-avoid rounded-[4px] border border-line bg-paper p-6 md:p-7', r.more && 'review-more']} hidden={r.more || undefined}>
             <Stars class="mb-4 text-[1rem] text-coral-deep" />
             <blockquote class="text-[1.0625rem] leading-relaxed text-ink">
               <p>«{q.text}»</p>
@@ -43,5 +83,52 @@ const items = ids
         );
       })}
     </div>
+    {extra.length > 0 && (
+      <div class="mt-4 flex flex-wrap gap-3">
+        <button type="button" class="btn btn-ink" data-reviews-more aria-expanded="false" data-more={t.more} data-less={t.less}>{t.more}</button>
+        <a href={site.reviewsUrl} target="_blank" rel="noopener" class="btn btn-line">
+          <Icon name="google" />{t.all}<Icon name="arrowUpRight" class="size-4!" />
+        </a>
+      </div>
+    )}
   </div>
 </section>
+
+<style>
+  .story-play {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.35), transparent 45%);
+    transition: opacity 200ms ease;
+  }
+  .story-play span:first-child { transition: transform 200ms var(--ease-out); }
+  .story-play:hover span:first-child { transform: scale(1.06); }
+  .story-play:active span:first-child { transform: scale(0.95); }
+  .story.playing .story-play { opacity: 0; pointer-events: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .review-more:not([hidden]) { animation: rv-in 450ms var(--ease-out) both; }
+    @keyframes rv-in { from { opacity: 0; transform: translateY(10px); } }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.story').forEach((box) => {
+    const v = box.querySelector<HTMLVideoElement>('[data-story]')!;
+    box.querySelector('[data-story-play]')!.addEventListener('click', () => {
+      // Одновременно играет только одна история.
+      document.querySelectorAll<HTMLVideoElement>('[data-story]').forEach((o) => { if (o !== v) o.pause(); });
+      v.controls = true;
+      v.play();
+      box.classList.add('playing');
+    });
+    v.addEventListener('pause', () => { if (v.ended) box.classList.remove('playing'); });
+  });
+
+  const btn = document.querySelector<HTMLButtonElement>('[data-reviews-more]');
+  btn?.addEventListener('click', () => {
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    document.querySelectorAll<HTMLElement>('.review-more').forEach((el) => { el.hidden = open; });
+    btn.setAttribute('aria-expanded', String(!open));
+    btn.textContent = open ? btn.dataset.more! : btn.dataset.less!;
+    if (open) document.getElementById('opiniones')?.scrollIntoView({ block: 'start' });
+  });
+</script>

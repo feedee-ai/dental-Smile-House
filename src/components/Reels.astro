@@ -1,0 +1,72 @@
+---
+// Рилсы клиники без текста: беззвучные, зациклены, играют только в зоне видимости.
+// При prefers-reduced-motion не стартуют сами — показываем постер и кнопку.
+import { copy } from '../content/copy';
+import { reels } from '../content/photos';
+import type { Lang } from '../content/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = copy[lang].reels;
+---
+<section class="bg-ink text-porcelain" aria-labelledby="reels-title">
+  <div class="wrap pb-6 pt-20 md:pt-24">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <h2 id="reels-title" class="text-[2.25rem] font-medium leading-[1.08] tracking-[-0.025em] md:text-[3.25rem]">{t.title}</h2>
+      <p class="max-w-[44ch] text-[1.0625rem] leading-relaxed text-porcelain/70">{t.lead}</p>
+    </div>
+  </div>
+  <ul class="reels-rail flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-20 md:gap-4 md:px-[max(1.25rem,calc((100vw-80rem)/2+2.5rem))] md:pb-24">
+    {reels.map((id) => (
+      <li class="reel relative w-[62vw] max-w-[17rem] shrink-0 snap-start overflow-hidden rounded-[4px] bg-[#1a1a1a] md:w-[15.5rem]">
+        <video
+          class="aspect-[9/16] w-full object-cover"
+          src={`/video/reel-${id}.mp4`}
+          poster={`/video/reel-${id}.webp`}
+          muted
+          loop
+          playsinline
+          preload="none"
+          aria-label={t.alt}
+          data-reel
+        ></video>
+        <button type="button" class="reel-play" data-reel-play aria-label={t.play}>
+          <svg viewBox="0 0 256 256" class="size-6" aria-hidden="true"><path fill="currentColor" d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27Z"/></svg>
+        </button>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .reels-rail { scrollbar-width: none; scroll-padding-inline: 1.25rem; }
+  .reels-rail::-webkit-scrollbar { display: none; }
+  .reel-play {
+    position: absolute; inset: auto auto 0.75rem 0.75rem; display: none; place-items: center;
+    width: 2.75rem; height: 2.75rem; border-radius: 999px; background: rgb(255 255 255 / 0.9); color: #121212;
+    transition: transform 160ms var(--ease-out);
+  }
+  .reel-play:active { transform: scale(0.94); }
+  .reel.paused .reel-play { display: grid; }
+</style>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const vids = [...document.querySelectorAll<HTMLVideoElement>('[data-reel]')];
+  const play = (v: HTMLVideoElement) => {
+    if (v.preload === 'none') v.preload = 'auto';
+    v.play().then(() => v.parentElement!.classList.remove('paused')).catch(() => v.parentElement!.classList.add('paused'));
+  };
+  vids.forEach((v) => {
+    const li = v.parentElement!;
+    li.querySelector('[data-reel-play]')!.addEventListener('click', () => play(v));
+    if (reduce) li.classList.add('paused');
+  });
+  if (!reduce) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      const v = e.target as HTMLVideoElement;
+      if (e.isIntersecting) play(v); else v.pause();
+    }), { threshold: 0.35 });
+    vids.forEach((v) => io.observe(v));
+  }
+</script>

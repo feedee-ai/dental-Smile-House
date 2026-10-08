@@ -30,9 +30,9 @@ export const site = {
     'https://www.google.com/maps/search/?api=1&query=Cl%C3%ADnica+dental+Smile+House+C%2F+de+la+Visitaci%C3%B3+2+46009+Val%C3%A8ncia',
   mapsEmbed:
     'https://www.google.com/maps?q=Cl%C3%ADnica+dental+Smile+House,+C%2F+de+la+Visitaci%C3%B3+2,+46009+Val%C3%A8ncia&output=embed',
-  // Ссылка на карточку с отзывами. Пока — поиск по названию; заменить на прямую ссылку на карточку.
+  // Карточка клиники в Google (place_id из выгрузки 08.10.2026).
   reviewsUrl:
-    'https://www.google.com/maps/search/?api=1&query=Cl%C3%ADnica+dental+Smile+House+Val%C3%A8ncia',
+    'https://www.google.com/maps/search/?api=1&query=Cl%C3%ADnica%20dental%20Smile%20House&query_place_id=ChIJg7lB_1RPYA0RTQ1EhgK_5DI',
 
   // Пн–пт 10:00–16:30, сб–вс закрыто. Время — Europe/Madrid.
   timezone: 'Europe/Madrid',
@@ -40,8 +40,8 @@ export const site = {
     { days: [1, 2, 3, 4, 5], open: '10:00', close: '16:30' },
   ] as { days: number[]; open: string; close: string }[],
 
-  // Не записаны в брифе. Пока null — на сайте не показываем.
-  googleRating: null as null | { value: number; count: number },
+  // Google Maps, выгрузка Apify 08.10.2026: 4,7 ★, 87 отзывов (80 × 5★, 7 × 1★).
+  googleRating: { value: 4.7, count: 87 } as null | { value: number; count: number },
   // Обязателен в подвале по правилам рекламы медуслуг Валенсийского сообщества.
   registroSanitario: null as null | string,
   // Юрлицо и CIF/NIF для политики конфиденциальности и aviso legal.

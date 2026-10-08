@@ -25,6 +25,10 @@ const t = copy[lang].form;
       data-lead-form
       data-lang={lang}
       data-msg={JSON.stringify({ phone: t.errPhone, name: t.errName, consent: t.errConsent, sending: t.sending, submit: t.submit })}
+      data-wa={site.whatsapp}
+      data-wa-text={JSON.stringify(lang === 'es'
+        ? { hello: 'Hola, quiero pedir cita en Smile House.', name: 'Nombre', phone: 'Teléfono', by: 'Prefiero', reason: 'Motivo', call: 'llamada', whatsapp: 'WhatsApp' }
+        : { hello: 'Здравствуйте! Хочу записаться в Smile House.', name: 'Имя', phone: 'Телефон', by: 'Удобнее', reason: 'Повод', call: 'звонок', whatsapp: 'WhatsApp' })}
     >
       <input type="hidden" name="lang" value={lang} />
       <div class="absolute -left-[9999px]" aria-hidden="true">
@@ -189,27 +193,22 @@ const t = copy[lang].form;
       err.classList.add('hidden');
       if (!validate()) return;
 
-      btn.disabled = true;
-      btn.classList.add('opacity-70');
-      label.textContent = msg.sending;
-      try {
-        const res = await fetch(form.action, {
-          method: 'POST',
-          headers: { Accept: 'application/json' },
-          body: new FormData(form),
-        });
-        if (!res.ok) throw new Error(String(res.status));
-        form.reset();
-        ok.classList.remove('hidden');
-        ok.focus();
-      } catch {
-        err.classList.remove('hidden');
-        err.focus();
-      } finally {
-        btn.disabled = false;
-        btn.classList.remove('opacity-70');
-        label.textContent = msg.submit;
-      }
+      // Демо: заявка уходит готовым сообщением в WhatsApp клиники (без сервера).
+      const fd = new FormData(form);
+      const w = JSON.parse(form.dataset.waText!);
+      const reasonSel = form.querySelector<HTMLSelectElement>('[name="reason"]');
+      const reason = reasonSel && reasonSel.value ? reasonSel.selectedOptions[0].textContent!.trim() : '';
+      const lines = [
+        w.hello, '',
+        `${w.name}: ${String(fd.get('name')).trim()}`,
+        `${w.phone}: ${String(fd.get('phone')).trim()}`,
+        `${w.by}: ${fd.get('contactBy') === 'whatsapp' ? w.whatsapp : w.call}`,
+      ];
+      if (reason) lines.push(`${w.reason}: ${reason}`);
+      const base = form.dataset.wa!.replace(/\?.*$/, '');
+      window.open(`${base}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+      ok.classList.remove('hidden');
+      ok.focus();
     });
   }
 </script>

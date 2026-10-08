@@ -13,11 +13,15 @@ import type { Lang } from './site';
 export type Review = {
   id: string;
   author: string;
-  lang: Lang;
+  // Язык оригинала. Отзывы на английском переводим на оба языка сайта (tr).
+  lang: Lang | 'en';
   text: string;
-  translation: string;
+  translation?: string;
+  tr?: Partial<Record<Lang, string>>;
+  // Дополнительные отзывы (выгрузка Google 08.10.2026) — показываются по кнопке «ещё».
+  more?: boolean;
   // Тема — чтобы подбирать отзывы к секциям.
-  topic: 'complex' | 'fear' | 'explain' | 'urgent' | 'family' | 'tech';
+  topic: 'complex' | 'fear' | 'explain' | 'urgent' | 'family' | 'tech' | 'care';
   doctor?: 'dmitry' | 'javier' | 'lucila';
 };
 
@@ -163,6 +167,104 @@ export const reviews: Review[] = [
     translation: 'Они относятся к пациентам как к членам семьи, с невероятной заботой и состраданием.',
     topic: 'family',
   },
+// ─── Добавлено 08.10.2026 из выгрузки Google Maps (Apify): все 5★, дословно. ───
+  // Не берём отзывы, где хвалят Марию (CLAUDE.md), и слова «безболезненно».
+  {
+    id: 'svietlieisha', author: 'Nataliia Svietlieisha', lang: 'es', topic: 'complex', more: false,
+    text: 'Llegué después de una mala experiencia en otra clínica, donde me puse brackets y quedé completamente insatisfecha. Aqui solucionaron mi problema y me ofrecieron todo lo que necesitaba',
+    translation: 'Я пришла после неудачного опыта в другой клинике, где мне поставили брекеты и я осталась совершенно недовольна. Здесь решили мою проблему и предложили всё, что мне было нужно.',
+  },
+  {
+    id: 'nabilkova', author: 'Olga Nabilkova', lang: 'ru', topic: 'complex',
+    text: 'Чтобы достичь идеального результата доктор даже связывался с моей предыдущей клиникой, чтобы согласовать установку недоделанного там импланта. Вся работа по восстановлению была четко распланирована…',
+    translation: 'Para conseguir un resultado perfecto, el doctor incluso se puso en contacto con mi clínica anterior para coordinar el implante que habían dejado a medias. Todo el trabajo de rehabilitación estuvo planificado al detalle…',
+  },
+  {
+    id: 'androsova', author: 'Nadezda Androsova', lang: 'ru', topic: 'explain',
+    text: 'Другие врачи напугали меня, неверно оценив ситуацию. Здесь же ответили адекватно на все вопросы, ссылаясь на реальные источники.',
+    translation: 'Otros médicos me asustaron al valorar mal la situación. Aquí respondieron con sensatez a todas mis preguntas, basándose en fuentes reales.',
+  },
+  {
+    id: 'afanasieva', author: 'Лариса Афанасьева', lang: 'ru', topic: 'complex', more: true,
+    text: 'И единственные врачи, которые смогли мне помочь и не остались безразличны к моим проблемам- это сотрудники этой клиники. Теперь и я и мои близкие все лечимся только там, хотя ездить приходится из Барселоны.',
+    translation: 'Los únicos médicos que pudieron ayudarme y a los que no les dieron igual mis problemas son los de esta clínica. Ahora mi familia y yo solo nos tratamos allí, aunque tengamos que venir desde Barcelona.',
+  },
+  {
+    id: 'shurigin', author: 'Alexandr Shurigin', lang: 'en', topic: 'care', more: true,
+    text: 'The very best clinic I know. I have living experience in four countries and the doctors there are the most professional people I’ve met in my life!',
+    tr: {
+      es: 'La mejor clínica que conozco. He vivido en cuatro países y estos doctores son las personas más profesionales que he conocido en mi vida.',
+      ru: 'Лучшая клиника, которую я знаю. Я жил в четырёх странах, и здешние врачи — самые профессиональные люди, которых я встречал.',
+    },
+  },
+  {
+    id: 'elenad', author: 'Елена Д', lang: 'ru', topic: 'explain', more: true,
+    text: 'Обратилась в клинику со сломанным зубом. Описали лечение и сразу обозначили сумму. … В итоге получилось вылечить зуб более щадящим способом и за меньшие деньги.',
+    translation: 'Fui a la clínica con un diente roto. Me describieron el tratamiento y me dijeron el precio desde el principio. … Al final pudieron tratar el diente de una forma más conservadora y por menos dinero.',
+  },
+  {
+    id: 'cristina', author: 'Sh. Cristina', lang: 'es', topic: 'urgent', more: true,
+    text: 'Desde hace cuatro años confío en ellos y siempre estoy satisfecho con el resultado. En caso de emergencia, siempre te ayudará.',
+    translation: 'Я доверяю им уже четыре года и всегда довольна результатом. В экстренной ситуации здесь всегда помогут.',
+  },
+  {
+    id: 'tokareva', author: 'Dominika Tokareva', lang: 'es', topic: 'care', more: true,
+    text: 'Me ha encantado, el servicio es muy bueno y avanzado. Se nota que son especialistas, un servicio de 10 y súper personalizado.',
+    translation: 'Мне очень понравилось, сервис отличный и современный. Сразу видно, что это специалисты: обслуживание на 10 из 10 и очень индивидуальное.',
+  },
+  {
+    id: 'chikina', author: 'Ирина Чикина', lang: 'ru', topic: 'complex', doctor: 'dmitry', more: true,
+    text: 'Лучшая стоматология!!! Огромная благодарность Дмитрию за имплант! Тут работают профи!',
+    translation: '¡La mejor clínica dental! ¡Muchísimas gracias a Dmitry por el implante! ¡Aquí trabajan profesionales!',
+  },
+  {
+    id: 'linares', author: 'Clàudia Linares Torres', lang: 'es', topic: 'family', more: true,
+    text: '¡Los mejores profesionales de toda Valencia! La atención es súper agradable y cercana por parte de todos los trabajadores, se nota en el ambiente que son una gran familia.',
+    translation: 'Лучшие профессионалы во всей Валенсии! Все сотрудники очень приветливы и внимательны, по атмосфере видно, что это одна большая семья.',
+  },
+  {
+    id: 'ffuta', author: 'ffuta nnata', lang: 'en', topic: 'care', more: true,
+    text: 'I really liked this clinic! The doctors are very attentive, and the clinic itself looks beautiful and clean',
+    tr: {
+      es: '¡Me ha gustado mucho esta clínica! Los doctores son muy atentos y la clínica es bonita y está limpia.',
+      ru: 'Мне очень понравилась эта клиника! Врачи очень внимательные, а сама клиника красивая и чистая.',
+    },
+  },
+  {
+    id: 'laura', author: 'Laura B', lang: 'es', topic: 'care', doctor: 'javier', more: true,
+    text: 'Un trato excelente, en especial gracias al Doctor Javier por su profesionalidad y buena atención.',
+    translation: 'Отличное обслуживание, особая благодарность доктору Хавьеру за профессионализм и внимание.',
+  },
+  {
+    id: 'tikhonova', author: 'Валентина Тихонова', lang: 'ru', topic: 'care', more: true,
+    text: 'Сначала сняли брекеты, всё прошло быстро, капы изготовили в тот же день, ортодонт Марибель проконсультировала по капам и ретейнеру.',
+    translation: 'Primero me quitaron los brackets, todo fue rápido, las férulas me las hicieron el mismo día y la ortodoncista Maribel me explicó cómo usar las férulas y el retenedor.',
+  },
+  {
+    id: 'sitnikova', author: 'Nataly Sitnikova', lang: 'es', topic: 'care', more: true,
+    text: 'Excelente servicio y el personal muy amable. La mejor experiencia que he tenido para limpieza dental profunda!',
+    translation: 'Отличный сервис и очень приветливый персонал. Лучшая глубокая чистка зубов, которая у меня была!',
+  },
+  {
+    id: 'golubitsky', author: 'Роман Голубицкий', lang: 'ru', topic: 'complex', more: true,
+    text: 'Самая лучшая клиника в Валенсии по реабилитации лицевой хирургии !!!!',
+    translation: '¡La mejor clínica de Valencia para la rehabilitación tras cirugía facial!',
+  },
+  {
+    id: 'tulba', author: 'Maxim Tulba', lang: 'es', topic: 'care', more: true,
+    text: 'Vale la pena esperar la cita, excepcional servicio',
+    translation: 'Запись того стоит, обслуживание исключительное.',
+  },
+  {
+    id: 'skrypka', author: 'Semen Skrypka', lang: 'ru', topic: 'explain', more: true,
+    text: 'Отличная клиника. Врачи не просто берут деньги, а выполняют свою работу.',
+    translation: 'Una clínica excelente. Los médicos no solo cobran: hacen su trabajo de verdad.',
+  },
+  {
+    id: 'afanasev', author: 'Oleg Afanasev', lang: 'ru', topic: 'tech', more: true,
+    text: 'Лучшая клиника Валенсии с русскоговорящими Врачами. Прекрасное оборудование и отношение к пациентам.',
+    translation: 'La mejor clínica de Valencia con doctores que hablan ruso. Un equipamiento excelente y un gran trato a los pacientes.',
+  },
 ];
 
 export const reviewById = (id: string) => {
@@ -174,8 +276,9 @@ export const reviewById = (id: string) => {
 // Текст отзыва для страницы на языке `lang` + пометка, если это перевод.
 export function quoteFor(r: Review, lang: Lang) {
   if (r.lang === lang) return { text: r.text, note: null as string | null };
-  return {
-    text: r.translation,
-    note: lang === 'es' ? 'Traducido del ruso' : 'Перевод с испанского',
+  const notes: Record<Lang, Record<string, string>> = {
+    es: { ru: 'Traducido del ruso', en: 'Traducido del inglés' },
+    ru: { es: 'Перевод с испанского', en: 'Перевод с английского' },
   };
+  return { text: r.tr?.[lang] ?? r.translation ?? r.text, note: notes[lang][r.lang] ?? null };
 }
