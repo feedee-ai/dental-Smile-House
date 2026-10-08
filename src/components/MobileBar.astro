@@ -1,0 +1,21 @@
+---
+// Нижняя панель на телефоне: человек с острой болью ищет с телефона (CLAUDE.md).
+import Icon from './Icon.astro';
+import { copy } from '../content/copy';
+import { site, homePath, type Lang } from '../content/site';
+
+interface Props { lang: Lang; onHome?: boolean }
+const { lang, onHome = true } = Astro.props;
+const t = copy[lang].cta;
+const base = onHome ? '' : homePath(lang);
+---
+<nav
+  aria-label={t.book}
+  class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:hidden"
+>
+  <ul class="grid grid-cols-[1fr_1fr_1.35fr] gap-2">
+    <li><a href={site.phone.href} class="btn btn-line min-h-12 w-full gap-1.5 px-2 text-[0.9375rem]"><Icon name="phone" />{t.call}</a></li>
+    <li><a href={site.whatsapp} target="_blank" rel="noopener" class="btn btn-line min-h-12 w-full gap-1.5 px-2 text-[0.9375rem]"><Icon name="whatsapp" />{t.whatsapp}</a></li>
+    <li><a href={`${base}#cita`} class="btn btn-ink min-h-12 w-full px-2 text-[0.9375rem]">{t.book}</a></li>
+  </ul>
+</nav>
