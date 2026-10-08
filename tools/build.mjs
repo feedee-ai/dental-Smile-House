@@ -45,7 +45,8 @@ function head(t, lang, { title, description, alternates, noindex = false, ld = [
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-${noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="canonical" href="${canonical}">
+${noindex ? '<meta name="robots" content="noindex">\n' : ''}<meta name="robots" content="noindex">
+<link rel="canonical" href="${canonical}">
 ${langs.map((l) => `<link rel="alternate" hreflang="${l}" href="${site.url + alternates[l]}">`).join('\n')}
 <link rel="alternate" hreflang="x-default" href="${site.url + alternates.es}">
 <meta name="theme-color" content="#0d0f10">
